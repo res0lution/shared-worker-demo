@@ -9,6 +9,20 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 		<img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
 
 		<h1>Vite + TypeScript</h1>
+
+		<div class="card">
+			<button id="openAllTabsModal" type="button">Открыть модалку во всех вкладках</button>
+		</div>
+
+		<div id="modalOverlay" class="modal-overlay" aria-hidden="true">
+			<div class="modal">
+				<h2>Shared modal</h2>
+				<p>Это модалка, синхронизированная через SharedWorker.</p>
+				<div class="card">
+					<button id="closeAllTabsModal" type="button">Закрыть модалку во всех вкладках</button>
+				</div>
+			</div>
+		</div>
 	</div>
 `
 
@@ -23,6 +37,9 @@ let port: MessagePort
 	const $log = document.getElementById('log')
 	const $form = document.getElementById('form')
 	const $input = document.getElementById('input')
+	const $openBtn = document.getElementById('openAllTabsModal')
+	const $closeBtn = document.getElementById('closeAllTabsModal')
+	const $overlay = document.getElementById('modalOverlay')
 
 	function log(line: string) {
 		if ($log) {
@@ -48,6 +65,14 @@ let port: MessagePort
 			case 'chat':
 				log(`💬 [${msg.from}]: ${msg.text}`)
 				break
+			case 'modal-open':
+				if ($overlay) $overlay.setAttribute('aria-hidden', 'false')
+				log('🔔 modal-open')
+				break
+			case 'modal-close':
+				if ($overlay) $overlay.setAttribute('aria-hidden', 'true')
+				log('🔕 modal-close')
+				break
 			case 'echo':
 				log(`↩️ echo: ${JSON.stringify(msg.received)}`)
 				break
@@ -70,6 +95,25 @@ let port: MessagePort
 				log(`🏖️ [ME]: ${text}`)
 				inputElement.value = ''
 				inputElement.focus()
+			}
+		})
+	}
+
+	// Открытие/закрытие модалки во всех вкладках
+	if ($openBtn) {
+		$openBtn.addEventListener('click', () => {
+			port.postMessage({ type: 'modal-open' })
+		})
+	}
+	if ($closeBtn) {
+		$closeBtn.addEventListener('click', () => {
+			port.postMessage({ type: 'modal-close' })
+		})
+	}
+	if ($overlay) {
+		$overlay.addEventListener('click', (ev) => {
+			if (ev.target === $overlay) {
+				port.postMessage({ type: 'modal-close' })
 			}
 		})
 	}
