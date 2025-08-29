@@ -1,0 +1,20 @@
+{
+	"name": "shared-worker-demo",
+	"type": "module",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix"
+	},
+	"devDependencies": {
+		"@antfu/eslint-config": "^5.2.1",
+		"eslint": "^9.34.0",
+		"eslint-plugin-format": "^1.0.1",
+		"typescript": "~5.8.3",
+		"vite": "^7.1.2"
+	}
+}
