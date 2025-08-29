@@ -16,7 +16,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 		<div id="modalOverlay" class="modal-overlay" aria-hidden="true">
 			<div class="modal">
-				<h2>Shared modal</h2>
+				<h2>Shared modal!</h2>
 				<p>Это модалка, синхронизированная через SharedWorker.</p>
 				<div class="card">
 					<button id="closeAllTabsModal" type="button">Закрыть модалку во всех вкладках</button>
