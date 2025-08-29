@@ -23,10 +23,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: inject build date 🕒
-        run: |
-          sed -i "s/^VITE_BUILD_DATE=.*/VITE_BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)/" .env
-
       - name: install dependencies and build 🔥
         run: |
           npm ci
