@@ -1,0 +1,40 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - name: checkout main branch 🦕
+        uses: actions/checkout@v4
+
+      - name: setup node 📦
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: inject build date 🕒
+        run: |
+          sed -i "s/^VITE_BUILD_DATE=.*/VITE_BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)/" .env
+
+      - name: install dependencies and build 🔥
+        run: |
+          npm ci
+          npm run build
+
+      - name: deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: dist
+          clean: true
