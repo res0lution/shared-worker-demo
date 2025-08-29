@@ -13,16 +13,16 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 `
 
 // Инициализация shared worker
-let port: any
+let port: MessagePort
 (function initSharedWorker() {
 	const worker = new SharedWorker('shared-worker.js')
 	port = worker.port
 	port.start()
 
 	// UI-хуки (ищем элементы, если они есть на странице)
-	const $log = document.getElementById('log')!
-	const $form = document.getElementById('form')!
-	const $input = document.getElementById('input')!
+	const $log = document.getElementById('log')
+	const $form = document.getElementById('form')
+	const $input = document.getElementById('input')
 
 	function log(line: string) {
 		if ($log) {
@@ -36,7 +36,7 @@ let port: any
 	}
 
 	// Приём сообщений от воркера
-	port.onmessage = (e: any) => {
+	port.onmessage = (e: MessageEvent) => {
 		const msg = e.data
 		switch (msg?.type) {
 			case 'hello':
@@ -57,21 +57,19 @@ let port: any
 	}
 
 	port.onmessageerror = () => log('⚠️ messageerror')
-	port.onerror = (err: any) => log(`⚠️ error: ${err?.message || err}`)
+	// MessagePort doesn't have onerror, errors are handled via message events
 
 	// Отправка сообщений (если есть форма)
 	if ($form && $input) {
-		$form.addEventListener('submit', (e: any) => {
+		$form.addEventListener('submit', (e: Event) => {
 			e.preventDefault()
-			// eslint-disable-next-line ts/ban-ts-comment
-			// @ts-expect-error
-			const text = $input.value.trim()
+			const inputElement = $input as HTMLInputElement
+			const text = inputElement.value.trim()
 			if (text) {
 				port.postMessage({ type: 'chat', text })
-				// eslint-disable-next-line ts/ban-ts-comment
-				// @ts-expect-error
-				$input.value = ''
-				$input.focus()
+				log(`🏖️ [ME]: ${text}`)
+				inputElement.value = ''
+				inputElement.focus()
 			}
 		})
 	}

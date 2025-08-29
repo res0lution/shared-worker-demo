@@ -33,6 +33,16 @@ onconnect = (event) => {
 				broadcast({ type: 'chat', from: clientId, text: msg.text }, port)
 				break
 
+			case 'modal-open':
+				// Открываем модальное окно во всех вкладках
+				broadcast({ type: 'modal-open' })
+				break
+
+			case 'modal-close':
+				// Закрываем модальное окно во всех вкладках
+				broadcast({ type: 'modal-close' })
+				break
+
 			case 'disconnect':
 				// Явное отключение (например, beforeunload)
 				try { port.close() }
